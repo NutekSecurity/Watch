@@ -7,6 +7,8 @@ require (
 	github.com/gen2brain/beeep v0.0.0-20200526185328-e9c15c258e28
 	github.com/godbus/dbus/v5 v5.0.4 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20210420193930-a4630ec28c79 // indirect
+	github.com/recoilme/pudge v1.0.3 // indirect
+	github.com/recoilme/slowpoke v2.0.1+incompatible
 	golang.org/x/sys v0.0.0-20210426230700-d19ff857e887 // indirect
 )
 

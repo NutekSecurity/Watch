@@ -9,6 +9,7 @@ import (
 
 	Watch "github.com/buahaha/watch/Watch"
 	"github.com/gen2brain/beeep"
+	"github.com/recoilme/slowpoke"
 
 	ui "github.com/buahaha/termui/v3"
 	"github.com/buahaha/termui/v3/widgets"
@@ -115,57 +116,15 @@ func main() {
 	goToDate.SetRect(21, 21, 54, 25)
 	goToDate.Title = "Year Month Day exchange field"
 
-	// yearBack := widgets.NewParagraph()
-	// yearBack.Title = "year"
-	// yearBack.Text = "<<<-"
-	// // yearBack.Rows = [][]string{{"<<<-"}}
-	// // yearBack.TextAlignment = ui.AlignCenter
-	// yearBack.TextStyle = ui.NewStyle(ui.ColorCyan, ui.ColorBlue, ui.ModifierBold)
-	// yearBack.SetRect(21, 21, 28, 24)
-	// yearBack.Border = false
-
-	// yearForward := widgets.NewParagraph()
-	// yearForward.Title = "year"
-	// yearForward.Text = "->>>"
-	// // yearForward.Rows = [][]string{{"->>>"}}
-	// // yearForward.TextAlignment = ui.AlignCenter
-	// yearForward.TextStyle = ui.NewStyle(ui.ColorCyan, ui.ColorBlue, ui.ModifierBold)
-	// yearForward.SetRect(47, 21, 54, 24)
-	// yearForward.Border = false
-
-	// monthBack := widgets.NewParagraph()
-	// monthBack.Title = "month"
-	// monthBack.Text = "<-"
-	// // monthBack.Rows = [][]string{{"<-"}}
-	// // monthBack.TextAlignment = ui.AlignCenter
-	// monthBack.TextStyle = ui.NewStyle(ui.ColorCyan, ui.ColorBlue, ui.ModifierBold)
-	// monthBack.SetRect(28, 21, 35, 24)
-	// monthBack.Border = false
-
-	// monthForward := widgets.NewParagraph()
-	// monthForward.Title = "month"
-	// monthForward.Text = "->"
-	// // monthForward.Rows = [][]string{{"->"}}
-	// // monthForward.TextAlignment = ui.AlignCenter
-	// monthForward.TextStyle = ui.NewStyle(ui.ColorCyan, ui.ColorBlue, ui.ModifierBold)
-	// monthForward.SetRect(40, 21, 47, 24)
-	// monthForward.Border = false
-
-	// thisMonth := widgets.NewParagraph()
-	// thisMonth.Text = "ba\nck"
-	// thisMonth.SetRect(35, 21, 40, 25)
-	// thisMonth.Border = false
-
-	// dock := widgets.NewParagraph()
-	// dock.SetRect(54, 12, 80, 25)
-	// deaths := Wiki.GetDeaths(time.Now().Day(), int(time.Now().Month()))
-	// myDeaths := deaths.Deaths
-	// dock.Title = fmt.Sprint(myDeaths[0].Year)
-	// dock.Text = myDeaths[0].Description + " " + myDeaths[0].Wikipedia[0].Wikipedia
-
 	dock := widgets.NewInput()
 	dock.SetRect(54, 12, 80, 25)
-	dock.Title = "Notes"
+	dock.Title = fmt.Sprintf("Note %d-%d-%d", cal.Year, cal.Month, cal.Day)
+	// create database
+	file := "db/Watch.db"
+	// close all opened database
+	defer slowpoke.CloseAll()
+	res, _ := slowpoke.Get(file, []byte(strings.Split(dock.Title, " ")[1]))
+	dock.Text = string(res)
 
 	ui.Render(
 		swDisplay, swStart, swClear, l, swBars,
@@ -189,7 +148,7 @@ func main() {
 	swTickerChan := swTicker.C
 	swTicker.Stop()
 	clockTicker := time.NewTicker(time.Second).C
-	calendarTicker := time.NewTicker(10 * time.Second).C
+	calendarTicker := time.NewTicker(5 * time.Second).C
 	// deathToll := len(myDeaths)
 	renderTicker := time.NewTicker(1000 / 23 * time.Millisecond)
 	for {
@@ -225,14 +184,20 @@ func main() {
 					// ui.Render(l, swBars)
 				} else if x >= 0 && x <= 8 &&
 					y >= 0 && y <= 6 &&
-					!stopwatch.Running {
+					!stopwatch.Running ||
+					x >= 0 && x <= 21 &&
+						y >= 0 && y <= 3 &&
+						!stopwatch.Running {
 					stopwatch.Start()
 					swTicker.Reset(50 * time.Millisecond)
 					swStart.Text = "[Stop!](mod:bold)"
 					// ui.Render(swStart)
 				} else if x >= 0 && x <= 8 &&
 					y >= 3 && y <= 6 &&
-					stopwatch.Running {
+					stopwatch.Running ||
+					x >= 0 && x <= 21 &&
+						y >= 0 && y <= 3 &&
+						stopwatch.Running {
 					swDisplay.Text = stopwatch.Stop().String()
 					swTicker.Stop()
 					stopwatch = Watch.NewStopwatch()
@@ -275,7 +240,7 @@ func main() {
 					}
 					// go input.NoFocus()
 					timerSetHours.Text = ""
-					timerSetHours.Focus()
+					go timerSetHours.Focus()
 					_, err = strconv.Atoi(timerSetHours.Text)
 					if err != nil {
 						timerSetHours.Text = ""
@@ -286,7 +251,7 @@ func main() {
 						timerStart.TitleStyle.Fg = ui.ColorGreen
 					}
 					// ui.Render(timerSetHours, timerSetMinutes, timerSetSeconds, timerStart)
-					go timerSetHours.NoFocus()
+					// timerSetHours.NoFocus()
 				} else if x >= 5 && x <= 12 &&
 					y >= 15 && y <= 18 {
 					// go timerSetHours.NoFocus()
@@ -309,7 +274,7 @@ func main() {
 					}
 					// go input.NoFocus()
 					timerSetMinutes.Text = ""
-					timerSetMinutes.Focus()
+					go timerSetMinutes.Focus()
 					_, err = strconv.Atoi(timerSetMinutes.Text)
 					if err != nil {
 						timerSetMinutes.Text = ""
@@ -320,7 +285,7 @@ func main() {
 						timerStart.TitleStyle.Fg = ui.ColorGreen
 					}
 					// ui.Render(timerSetHours, timerSetMinutes, timerSetSeconds, timerStart)
-					go timerSetMinutes.NoFocus()
+					// go timerSetMinutes.NoFocus()
 				} else if x >= 12 && x <= 21 &&
 					y >= 15 && y <= 18 {
 					// go timerSetHours.NoFocus()
@@ -346,7 +311,7 @@ func main() {
 					timerSetMinutes.TitleStyle.Fg = ui.ColorRed
 					// go input.NoFocus()
 					timerSetSeconds.Text = ""
-					timerSetSeconds.Focus()
+					go timerSetSeconds.Focus()
 					_, err = strconv.Atoi(timerSetSeconds.Text)
 					if err != nil {
 						timerSetSeconds.Text = ""
@@ -357,7 +322,7 @@ func main() {
 						timerStart.TitleStyle.Fg = ui.ColorGreen
 					}
 					// ui.Render(timerSetHours, timerSetMinutes, timerSetSeconds, timerStart)
-					go timerSetSeconds.NoFocus()
+					// go timerSetSeconds.NoFocus()
 				} else if x >= 0 && x <= 21 &&
 					y >= 18 && y <= 21 {
 					if !timer.Running {
@@ -396,42 +361,15 @@ func main() {
 					// go timerSetMinutes.NoFocus()
 					// go timerSetSeconds.NoFocus()
 					// go dock.NoFocus()
-					input.Focus()
-					go input.NoFocus()
+					go input.Focus()
+					// go input.NoFocus()
 				} else if x >= 54 && y >= 12 && x <= 80 && y <= 25 {
-					dock.Focus()
-					go dock.NoFocus()
+					go dock.Focus()
+					// go dock.NoFocus()
 				} else if x >= 21 && y >= 21 && x <= 54 && y <= 25 {
-					goToDate.Focus()
-					go goToDate.NoFocus()
-					if goToDate.Text != "" {
-						strArr := strings.Split(goToDate.Text, " ")
-						var intArr []int
-						for _, str := range strArr {
-							tmp, err := strconv.Atoi(str)
-							if err != nil {
-								break
-							}
-							intArr = append(intArr, tmp)
-						}
-						if len(intArr) == 3 {
-							cal = Watch.NewCalendar(intArr[0], intArr[1], intArr[2], 0, 0, 0, 0)
-							calendar = widgets.NewTable()
-							calendar.Title = cal.CalendarTitle
-							calendar.SetRect(21, 12, 54, 21)
+					go goToDate.Focus()
+					// go goToDate.NoFocus()
 
-							calendar.Rows = cal.CalendarRows
-
-							calendar.TextAlignment = ui.AlignCenter
-							calendar.BorderStyle.Fg = ui.ColorYellow
-							calendar.RowSeparator = false
-							calendar.RowStyles[cal.TodayRow] = ui.NewStyle(ui.ColorGreen, ui.ColorClear, ui.ModifierBold)
-							calendar.ColumnWidths = []int{3, 3, 3, 3, 3, 3, 3}
-							calendar.ColumnWidths[cal.Complex.Weekday()] = 7
-							ui.Render(calendar)
-							goToDate.Text = ""
-						}
-					}
 				}
 			}
 			// case "<Resize>":
@@ -451,15 +389,42 @@ func main() {
 				dock,
 			)
 		case <-calendarTicker:
-			// msg := myDeaths[deathToll-1].Description + " " +
-			// 	myDeaths[deathToll-1].Wikipedia[0].Wikipedia
-			// dock.Title = fmt.Sprint(myDeaths[deathToll-1].Year)
-			// dock.Text = msg
-			// deathToll--
-			// if deathToll-1 <= 0 {
-			// 	deathToll = len(myDeaths)
-			// }
-			// ui.Render(dock)
+			key := []byte(strings.Split(dock.Title, " ")[1])
+			val := []byte(dock.Text)
+			//store
+			slowpoke.Set(file, key, val)
+			if goToDate.Text != "" {
+				strArr := strings.Split(goToDate.Text, " ")
+				var intArr []int
+				for _, str := range strArr {
+					tmp, err := strconv.Atoi(str)
+					if err != nil {
+						break
+					}
+					intArr = append(intArr, tmp)
+				}
+				if len(intArr) == 3 {
+					cal = Watch.NewCalendar(intArr[0], intArr[1], intArr[2], 0, 0, 0, 0)
+					calendar = widgets.NewTable()
+					calendar.Title = cal.CalendarTitle
+					calendar.SetRect(21, 12, 54, 21)
+
+					calendar.Rows = cal.CalendarRows
+
+					calendar.TextAlignment = ui.AlignCenter
+					calendar.BorderStyle.Fg = ui.ColorYellow
+					calendar.RowSeparator = false
+					calendar.RowStyles[cal.TodayRow] = ui.NewStyle(ui.ColorGreen, ui.ColorClear, ui.ModifierBold)
+					calendar.ColumnWidths = []int{3, 3, 3, 3, 3, 3, 3}
+					calendar.ColumnWidths[cal.Complex.Weekday()] = 7
+					// ui.Render(calendar)
+					goToDate.Text = ""
+					dock.Title = fmt.Sprintf("Note %d-%d-%d", cal.Year, cal.Month, cal.Day)
+					// get
+					res, _ := slowpoke.Get(file, []byte(strings.Split(dock.Title, " ")[1]))
+					dock.Text = string(res)
+				}
+			}
 		case <-swTickerChan:
 			if stopwatch.Running {
 				swDisplay.Text = stopwatch.Diff().String()
@@ -500,5 +465,4 @@ func main() {
 			}
 		}
 	}
-
 }
