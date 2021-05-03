@@ -10,6 +10,9 @@ func TestStopwatch(t *testing.T) {
 	if stopwatch.Running {
 		t.Error("Should not run after initialization")
 	}
+	if stopwatch.Diff() != 0 {
+		t.Error("Should give zero before starting")
+	}
 	stopwatch.Start()
 	if !stopwatch.Running {
 		t.Error("Not \"Running\"")

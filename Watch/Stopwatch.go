@@ -39,7 +39,7 @@ func (v *Stopwatch) Stop() time.Duration {
 // of measured portion of time
 func (v *Stopwatch) Diff() time.Duration {
 	if v.endTime == -1 && !v.Running {
-		return -1
+		return 0
 	} else if v.endTime == -1 && v.Running {
 		return time.Since(v.startTime)
 	} else if v.endTime > -1 {
