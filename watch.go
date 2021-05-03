@@ -393,6 +393,26 @@ func main() {
 			val := []byte(dock.Text)
 			//store
 			slowpoke.Set(file, key, val)
+			if time.Now().Day() != cal.Today {
+				cal = Watch.NewCalendar(time.Now().Year(), int(time.Now().Month()), time.Now().Day(), 0, 0, 0, 0)
+				calendar = widgets.NewTable()
+				calendar.Title = cal.CalendarTitle
+				calendar.SetRect(21, 12, 54, 21)
+
+				calendar.Rows = cal.CalendarRows
+
+				calendar.TextAlignment = ui.AlignCenter
+				calendar.BorderStyle.Fg = ui.ColorYellow
+				calendar.RowSeparator = false
+				calendar.RowStyles[cal.TodayRow] = ui.NewStyle(ui.ColorGreen, ui.ColorClear, ui.ModifierBold)
+				calendar.ColumnWidths = []int{3, 3, 3, 3, 3, 3, 3}
+				calendar.ColumnWidths[cal.Complex.Weekday()] = 7
+
+				dock.Title = fmt.Sprintf("Note %d-%d-%d", cal.Year, cal.Month, cal.Day)
+				// get
+				res, _ := slowpoke.Get(file, []byte(strings.Split(dock.Title, " ")[1]))
+				dock.Text = string(res)
+			}
 			if goToDate.Text != "" {
 				strArr := strings.Split(goToDate.Text, " ")
 				var intArr []int

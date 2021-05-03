@@ -9,6 +9,7 @@ type Calendar struct {
 	Year          int
 	Month         time.Month
 	Day           int
+	Today         int
 	Week          int
 	Complex       time.Time
 	MonthDays     []time.Time
@@ -107,6 +108,7 @@ Loop:
 		Year:          year,
 		Month:         month,
 		Day:           today,
+		Today:         time.Now().Day(),
 		Week:          week,
 		MonthDays:     days,
 		Complex:       now,
