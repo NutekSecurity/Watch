@@ -89,8 +89,17 @@ func NewCalendar(params ...int) Calendar {
 			calendarRows = append(calendarRows, calDays)
 			calDays = make([]string, 7)
 		}
-		if today == day.Day() {
-			rowEmphasize = len(calendarRows) - 1
+		// if today == day.Day() {
+		// 	rowEmphasize = len(calendarRows)
+	}
+
+Loop:
+	for i, v := range calendarRows {
+		for _, d := range v {
+			if d == fmt.Sprint(today) {
+				rowEmphasize = i
+				break Loop
+			}
 		}
 	}
 
