@@ -12,3 +12,5 @@
 *.out
 
 db
+
+.DS_Store
