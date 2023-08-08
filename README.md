@@ -13,13 +13,11 @@ Watch it, click it, break it :)
 
 ## Author
 
-Szymon Bronisław Błaszczyński [@museyoucoulduse](https://twitter.com/museyoucoulduse) [Neosb](https://neosb.marketplaceinspace.com)
+Szymon Bronisław Błaszczyński
 
 ## Contact
 
-[Twitter](https://twitter.com/museyoucoulduse)
-
-[Discord](https://discord.gg/zpZTKTe2)
+[Twitter](https://twitter.com/mathsecondname)
 
 [Gmail](mailto:museyoucoulduse@gmail.com)
 
