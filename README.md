@@ -17,7 +17,7 @@ Szymon Bronisław Błaszczyński
 
 ## Contact
 
-[Twitter](https://twitter.com/mathsecondname)
+[Twitter](https://twitter.com/nuteksecurity)
 
 [Gmail](mailto:museyoucoulduse@gmail.com)
 
